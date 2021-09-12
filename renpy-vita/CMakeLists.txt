@@ -34,7 +34,7 @@ set(SELF "eboot.bin")
 find_package(OpenSSL REQUIRED)
 
 file(GLOB_RECURSE simple_SRC
-    renpy-vita/source/*.c
+    source/*.c
 )
 
 add_executable("${ELF}"
@@ -99,3 +99,8 @@ vita_create_self("${SELF}"
   UNSAFE
   NOASLR
 )
+
+add_custom_command(TARGET ${SELF} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/eboot.bin
+                ${CMAKE_CURRENT_SOURCE_DIR}/DistributionTool/build/eboot.bin)
