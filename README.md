@@ -26,13 +26,13 @@ sparse in memory, so I may not be able to pull a rabbit out of my hat when it co
 ### Build Instructions 
 
 #### Pre-Req: 
-Linux (or WSL1/2) 
-Cython 
-Python 2.7.18
-Git
-Clone this repo
-Grab `PSVita_Release.zip` and `vitasdk_stubs.zip` from [PVR_PSP2 releases](https://github.com/GrapheneCt/PVR_PSP2/releases)
-Clone [SDL](https://github.com/libsdl-org/SDL)
+Linux (or WSL1/2)<br>
+Cython<br> 
+Python 2.7.18<br>
+Git<br>
+Clone this repo<br>
+Grab `PSVita_Release.zip` and `vitasdk_stubs.zip` from [PVR_PSP2 releases](https://github.com/GrapheneCt/PVR_PSP2/releases)<br>
+Clone [SDL](https://github.com/libsdl-org/SDL)<br>
 Clone [Python Future](https://github.com/PythonCharmers/python-future)
 
 #### Steps:
