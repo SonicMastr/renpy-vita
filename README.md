@@ -1,8 +1,15 @@
 # renpy-vita
 A Native Ren'Py Visual Novel Port for the PSVita
 
-## Based on [renpy-switch](https://github.com/uyjulian/renpy-switch/) by uyjulian
+## Based on [renpy-switch](https://github.com/uyjulian/renpy-switch/) by uyjulian (great work)
 
+### Yeah. It's finally here
+About a year into the making (totally not because I can get a bit lazy), Ren'Py Vita is finally out.<br>
+A ton of frustration, troubleshooting, and long nights went into getting this to work. From cuevavirus making the base<br>
+of the Python 2.7 port, to GrapheneCt making PVR_PSP2, to isage working on SDL additions. And we can finally release<br>
+this gigantic project to you guys. Hope you like it, literally all I wanted to do was play the REAL DDLC on the Vita<br>
+        -SonicMastr
+        
 ## Known Issues
 - Load times can be pretty long and some image loading my cause hitches. This is sadly not something I can fix in<br>
 as it is a Vita hardware limitation.
