@@ -117,7 +117,6 @@ int main(int argc, char* argv[])
     Py_NoUserSiteDirectory = 1;
     Py_OptimizeFlag = 2;
 
-    sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DISABLE_OLED_DIMMING | SCE_KERNEL_POWER_TICK_DISABLE_OLED_OFF);
     /* Ren'Py is a bit CPU heavy. Increase CPU clocks */
     scePowerSetArmClockFrequency(444);
     /* Ren'Py requires full RW access */
@@ -177,7 +176,7 @@ int main(int argc, char* argv[])
     snprintf(hint.szGLES1, MAX_PATH, "%s/%s", app_gles_module_path, "libGLESv1_CM.suprx");
     snprintf(hint.szGLES2, MAX_PATH, "%s/%s", app_gles_module_path, "libGLESv2.suprx");
     snprintf(hint.szWindowSystem, MAX_PATH, "%s/%s", app_gles_module_path, "libpvrPSP2_WSEGL.suprx");
-    hint.ui32SwTexOpCleanupDelay = 2000; // Set to two milliseconds to prevent a pool of unfreed memory
+    hint.ui32SwTexOpCleanupDelay = 16000; // Set to 16 milliseconds to prevent a pool of unfreed memory
     PVRSRVCreateVirtualAppHint(&hint);
 
     /* Now let's start the Ren'Py Process */
