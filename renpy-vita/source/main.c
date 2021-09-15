@@ -10,6 +10,8 @@
 #include <psp2/vshbridge.h> 
 #include <gpu_es4/psp2_pvr_hint.h>
 
+#define MAX_PATH 256
+
 int _newlib_heap_size_user = 180 * 1024 * 1024;
 unsigned int sceLibcHeapSize = 10 * 1024 * 1024;
 
@@ -40,14 +42,12 @@ PyMODINIT_FUNC initpygame_sdl2_rwobject();
 PyMODINIT_FUNC initpygame_sdl2_scrap();
 PyMODINIT_FUNC initpygame_sdl2_surface();
 PyMODINIT_FUNC initpygame_sdl2_transform();
-
 PyMODINIT_FUNC init_renpy();
 PyMODINIT_FUNC init_renpybidi();
 PyMODINIT_FUNC initrenpy_audio_renpysound();
 PyMODINIT_FUNC initrenpy_display_accelerator();
 PyMODINIT_FUNC initrenpy_display_render();
 PyMODINIT_FUNC initrenpy_display_matrix();
-//PyMODINIT_FUNC initrenpy_gl_gl();
 PyMODINIT_FUNC initrenpy_gl_gldraw();
 PyMODINIT_FUNC initrenpy_gl_glenviron_shader();
 PyMODINIT_FUNC initrenpy_gl_glrtt_copy();
@@ -61,10 +61,6 @@ PyMODINIT_FUNC initrenpy_gl2_gl2model();
 PyMODINIT_FUNC initrenpy_gl2_gl2polygon();
 PyMODINIT_FUNC initrenpy_gl2_gl2shader();
 PyMODINIT_FUNC initrenpy_gl2_gl2texture();
-#if 0
-PyMODINIT_FUNC initrenpy_gl2_uguu();
-PyMODINIT_FUNC initrenpy_gl2_uguugl();
-#endif
 PyMODINIT_FUNC initrenpy_parsersupport();
 PyMODINIT_FUNC initrenpy_pydict();
 PyMODINIT_FUNC initrenpy_style();
@@ -111,11 +107,15 @@ void show_error_and_exit(const char* message)
 
 int main(int argc, char* argv[])
 {
+    PVRSRV_PSP2_APPHINT hint;
+    SceUID fd = -1;
+    SceBool override = SCE_FALSE;
+    char target_path[MAX_PATH];
+
     Py_NoSiteFlag = 1;
     Py_IgnoreEnvironmentFlag = 1;
     Py_NoUserSiteDirectory = 1;
     Py_OptimizeFlag = 2;
-    SceUID fd = -1;
 
     sceKernelPowerTick(SCE_KERNEL_POWER_TICK_DISABLE_OLED_DIMMING | SCE_KERNEL_POWER_TICK_DISABLE_OLED_OFF);
     /* Ren'Py is a bit CPU heavy. Increase CPU clocks */
@@ -134,7 +134,6 @@ int main(int argc, char* argv[])
     snprintf(app_gles_module_path, sizeof(app_gles_module_path), "%s/module", app_dir_path);
     snprintf(app_program_path, sizeof(app_program_path), "%s/eboot.bin", app_dir_path);
 
-    SDL_setenv("VITA_MODULE_PATH", app_gles_module_path, 1);
     /* Disable Back Touchpad to prevent "misclicks" */
     SDL_setenv("VITA_DISABLE_TOUCH_BACK", "1", 1);
 
@@ -142,16 +141,44 @@ int main(int argc, char* argv[])
     /* Alllow 1080i and 720p support on both PSTV and Vita if wanted (Needs Sharpscale) */
     if (fd = sceIoOpen(res_1080_path, SCE_O_RDONLY, 0777) > 0) {
         sceIoClose(fd);
+        override = SCE_TRUE;
+        /* This actually needs it for both systems,
+         * so just set it here for the vita */
+        scePowerSetGpuClockFrequency(222); 
         SDL_setenv("VITA_RESOLUTION", "1080", 1);
     }
     else if (fd = sceIoOpen(res_720_path, SCE_O_RDONLY, 0777) > 0) {
         sceIoClose(fd);
+        override = SCE_TRUE;
+        /* Vita doesn't really need it, but could help */
+        scePowerSetGpuClockFrequency(166);
         SDL_setenv("VITA_RESOLUTION", "720", 1);
     }
-    /* At least Set 720p for PSTV */
-    else if (vshSblAimgrIsDolce()) {
-        SDL_setenv("VITA_RESOLUTION", "720", 1);
+    /* At least Set 720p for PSTV and force 222MHz GPU since it's running on AC anyway */
+    if (vshSblAimgrIsDolce()) {
+        scePowerSetGpuClockFrequency(222);
+        if (!override)
+            SDL_setenv("VITA_RESOLUTION", "720", 1);
     }
+
+    /* We need to use some custom hints */
+    SDL_setenv("VITA_PVR_SKIP_INIT", "yeet", 1);
+
+    /* Load Modules */
+    sceKernelLoadStartModule("vs0:sys/external/libfios2.suprx", 0, NULL, 0, NULL, NULL);
+    sceKernelLoadStartModule("vs0:sys/external/libc.suprx", 0, NULL, 0, NULL, NULL);
+    snprintf(target_path, MAX_PATH, "%s/%s", app_gles_module_path, "libgpu_es4_ext.suprx");
+    sceKernelLoadStartModule(target_path, 0, NULL, 0, NULL, NULL);
+    snprintf(target_path, MAX_PATH, "%s/%s", app_gles_module_path, "libIMGEGL.suprx");
+    sceKernelLoadStartModule(target_path, 0, NULL, 0, NULL, NULL);
+
+    /* Set PVR Hints */
+    PVRSRVInitializeAppHint(&hint);
+    snprintf(hint.szGLES1, MAX_PATH, "%s/%s", app_gles_module_path, "libGLESv1_CM.suprx");
+    snprintf(hint.szGLES2, MAX_PATH, "%s/%s", app_gles_module_path, "libGLESv2.suprx");
+    snprintf(hint.szWindowSystem, MAX_PATH, "%s/%s", app_gles_module_path, "libpvrPSP2_WSEGL.suprx");
+    hint.ui32SwTexOpCleanupDelay = 2000; // Set to two milliseconds to prevent a pool of unfreed memory
+    PVRSRVCreateVirtualAppHint(&hint);
 
     /* Now let's start the Ren'Py Process */
     Py_SetProgramName(app_program_path);
@@ -185,14 +212,12 @@ int main(int argc, char* argv[])
         {"pygame_sdl2.scrap", initpygame_sdl2_scrap},
         {"pygame_sdl2.surface", initpygame_sdl2_surface},
         {"pygame_sdl2.transform", initpygame_sdl2_transform},
-
         {"_renpy", init_renpy},
         {"_renpybidi", init_renpybidi},
         {"renpy.audio.renpysound", initrenpy_audio_renpysound},
         {"renpy.display.accelerator", initrenpy_display_accelerator},
         {"renpy.display.matrix", initrenpy_display_matrix},
         {"renpy.display.render", initrenpy_display_render},
-//        {"renpy.gl.gl", initrenpy_gl_gl},
         {"renpy.gl.gldraw", initrenpy_gl_gldraw},
         {"renpy.gl.glenviron_shader", initrenpy_gl_glenviron_shader},
         {"renpy.gl.glrtt_copy", initrenpy_gl_glrtt_copy},
@@ -206,11 +231,6 @@ int main(int argc, char* argv[])
         {"renpy.gl2.gl2polygon", initrenpy_gl2_gl2polygon},
         {"renpy.gl2.gl2shader", initrenpy_gl2_gl2shader},
         {"renpy.gl2.gl2texture", initrenpy_gl2_gl2texture},
-#if 0
-        {"renpy.gl2.gl2geometry", initrenpy_gl2_gl2geometry},
-        {"renpy.gl2.uguu", initrenpy_gl2_uguu},
-        {"renpy.gl2.uguugl", initrenpy_gl2_uguugl},
-#endif
         {"renpy.parsersupport", initrenpy_parsersupport},
         {"renpy.pydict", initrenpy_pydict},
         {"renpy.style", initrenpy_style},
@@ -331,6 +351,7 @@ int main(int argc, char* argv[])
     }
     else
     {
+        /* This is where the fun begins */
         python_result = PyRun_SimpleFileEx(renpy_file, (const char*)python_script_buffer, 1);
     }
 

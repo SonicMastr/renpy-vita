@@ -11,7 +11,7 @@ set(VITA_MKSFOEX_FLAGS "${VITA_MKSFOEX_FLAGS} -d ATTRIBUTE2=12")
 add_compile_definitions(__psp2__)
 
 add_compile_options(
-  -std=gnu99
+  -O2 -std=gnu99  # This O2 literally won't do anything for official builds btw
   -w
   -fsingle-precision-constant -fno-common
 )

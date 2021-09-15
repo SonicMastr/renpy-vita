@@ -7,7 +7,7 @@ cp -as $(realpath ../pygame_sdl2/src/pygame_sdl2) tmp_build
 cp -as $(realpath ../renpy/renpy) tmp_build
 rm -r tmp_build/test
 rm -r tmp_build/lib2to3/tests
-rm -r tmp_build/test # You need to do this btw. I have no idea why. Maybe Julian does. I don't do bash. lol
+rm -r tmp_build/test # You need to do this btw. I have no idea why. Maybe Julian does. I don't do bash script lol
 rm -r tmp_build/youtube_dl
 pushd tmp_build
 find . -type l -not -name \*.py -delete
