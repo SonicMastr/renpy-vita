@@ -4,9 +4,8 @@ A Native Ren'Py Visual Novel Port for the PSVita<br>
 
 ## Yeah. It's finally here
 About a year into the making (totally not because I can get a bit lazy), Ren'Py Vita is finally out.<br>
-A ton of frustration, troubleshooting, and long nights went into getting this to work. From cuevavirus making the base<br>
-of the Python 2.7 port, to GrapheneCt making PVR_PSP2, to isage working on SDL additions. And we can finally release<br>
-this gigantic project to you guys. Hope you like it, literally all I wanted to do was play the REAL DDLC on the Vita<br>
+
+A ton of frustration, troubleshooting, and long nights went into getting this to work. From cuevavirus making the base of the Python 2.7 port, to GrapheneCt making PVR_PSP2, to isage working on SDL additions. And we can finally release this gigantic project to you guys. Hope you like it, literally all I wanted to do was play the REAL DDLC on the Vita.<br>
         -SonicMastr
         
 ## Want to make/port your own game? Use the Distribution Tool
@@ -15,15 +14,10 @@ It was designed to be used in tandem with the official Ren'Py SDK, so it's great
 Give it a go in the Releases.
         
 ## Known Issues
-- Load times can be pretty long and some image loading my cause hitches. This is sadly not something I can fix in<br>
-as it is a Vita hardware limitation.
-
+- Load times can be pretty long and some image loading my cause hitches. This is sadly not something I can fix as it is a Vita hardware limitation.
 - Video playback will not work
-
 - Quitting will crash (But I kinda left that in. Doesn't do anything bad. I promise)
-
-- Some games will run into memory issues. I will continue to tweak memory usage as necessary, but the Vita is pretty<br>
-sparse in memory, so I may not be able to pull a rabbit out of my hat when it comes to full compatibility.
+- Some games will run into memory issues. I will continue to tweak memory usage as necessary, but the Vita is pretty sparse in memory, so I may not be able to pull a rabbit out of my hat when it comes to full compatibility.
 
 ## Build Instructions 
 
