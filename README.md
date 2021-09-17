@@ -47,6 +47,7 @@ Clone [Python Future](https://github.com/PythonCharmers/python-future)
 
 ## Ren'Py Vita Ports
 [Doki Doki Literature Club Vita](https://github.com/SonicMastr/Doki-Doki-Literature-Club-Vita)
+[Contract Demon Vita](https://github.com/SonicMastr/Contract-Demon-Vita)
 
 ## Thanks
 
