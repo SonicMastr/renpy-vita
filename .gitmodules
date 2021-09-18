@@ -4,3 +4,6 @@
 [submodule "renpy"]
 	path = renpy
 	url = https://github.com/SonicMastr/renpy
+[submodule "Python-Player-Vita"]
+	path = Python-Player-Vita
+	url = https://github.com/SonicMastr/Python-Player-Vita
